@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Project</title>
+</head>
+
+<body>
+    <h1>Hello, Flask!</h1>
+    <p>This is a simple Flask project.</p>
+
+    <h2>Add</h2>
+    <form id="addForm">
+        <label for="addX">Enter X:</label>
+        <input type="number" id="addX" name="addX" required>
+
+        <label for="addY">Enter Y:</label>
+        <input type="number" id="addY" name="addY" required>
+
+        <button type="button" id="addButton">Add</button>
+    </form>
+
+    <div id="addResult"></div>
+
+    <h2>Subtract</h2>
+    <form id="subtractForm">
+        <label for="subtractX">Enter X:</label>
+        <input type="number" id="subtractX" name="subtractX" required>
+
+        <label for="subtractY">Enter Y:</label>
+        <input type="number" id="subtractY" name="subtractY" required>
+
+        <button type="button" id="subtractButton">Subtract</button>
+    </form>
+
+    <div id="subtractResult"></div>
+
+    <h2>Is Palindrome</h2>
+    <form id="ispalForm">
+        <label for="palindromeNumber">Enter a number:</label>
+        <input type="number" id="palindromeNumber" name="palindromeNumber" required>
+
+        <button type="button" id="ispalButton">Check Palindrome</button>
+    </form>
+
+    <div id="ispalResult"></div>
+
+    <h2>Sum of Digits</h2>
+    <form id="sumDigitsForm">
+        <label for="number">Enter a number:</label>
+        <input type="number" id="number" name="number" required>
+
+        <button type="button" id="sumDigitsButton">Calculate Sum of Digits</button>
+    </form>
+
+    <div id="sumDigitsResult"></div>
+
+    <h2>Zip</h2>
+    <form id="zipForm">
+        <label for="collection1">Collection 1:</label>
+        <input type="text" id="collection1" name="collection1" required>
+
+        <label for="collection2">Collection 2:</label>
+        <input type="text" id="collection2" name="collection2" required>
+
+        <!-- Update the button to call the zipCollections function -->
+        <button type="button" id="zipButton">Zip Collections</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        // Function to check if add or subtract functions have been used
+        function isAddSubtractUsed() {
+            return sessionStorage.getItem('add_subtract_used') === 'true';
+        }
+
+        // Event listener for the add button
+        document.getElementById('addButton').addEventListener('click', function () {
+            var addX = document.getElementById('addX').value;
+            var addY = document.getElementById('addY').value;
+
+            if (!addX || !addY) {
+                alert('All fields must be filled.');
+                return;
+            }
+
+            fetch(`/add/${addX}/${addY}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('addResult').innerText = `Result of add: ${data.result}`;
+                    sessionStorage.setItem('add_subtract_used', 'true');  // Set add_subtract_used to true
+                });
+        });
+
+        // Event listener for the subtract button
+        document.getElementById('subtractButton').addEventListener('click', function () {
+            var subtractX = document.getElementById('subtractX').value;
+            var subtractY = document.getElementById('subtractY').value;
+
+            if (!subtractX || !subtractY) {
+                alert('All fields must be filled.');
+                return;
+            }
+
+            fetch(`/subtract/${subtractX}/${subtractY}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('subtractResult').innerText = `Result of subtract: ${data.result}`;
+                    sessionStorage.setItem('add_subtract_used', 'true');  // Set add_subtract_used to true
+                });
+        });
+
+        // Event listener for the ispal button
+        document.getElementById('ispalButton').addEventListener('click', function () {
+            if (isAddSubtractUsed()) {
+                var palindromeNumber = document.getElementById('palindromeNumber').value;
+                if (!palindromeNumber) {
+                    alert('All fields must be filled.');
+                    return;
+                }
+                fetch(`/ispal/${palindromeNumber}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('ispalResult').innerText = data.result;
+                    });
+            } else {
+                alert('Both add and subtract must be used before using this feature.');
+            }
+        });
+
+        // Event listener for the sumDigits button
+        document.getElementById('sumDigitsButton').addEventListener('click', function () {
+            if (isAddSubtractUsed()) {
+                var number = document.getElementById('number').value;
+                if (!number) {
+                    alert('All fields must be filled.');
+                    return;
+                }
+                fetch(`/sum_digits/${number}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('sumDigitsResult').innerText = data.result;
+                    });
+            } else {
+                alert('Both add and subtract must be used before using this feature.');
+            }
+        });
+
+        // Event listener for the zip button
+        document.getElementById('zipButton').addEventListener('click', function () {
+            var collection1 = document.getElementById('collection1').value;
+            var collection2 = document.getElementById('collection2').value;
+
+            // Check if both collections are provided
+            if (!collection1 || !collection2) {
+                alert('Both collections must be provided.');
+                return;
+            }
+
+            // Call the zip_it route
+            fetch('/zip_it', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    collection1: collection1,
+                    collection2: collection2
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Display the result
+                document.getElementById('result').innerText = JSON.stringify(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+
+</html>
