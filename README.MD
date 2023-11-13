@@ -36,7 +36,9 @@ To run the project, use the following command:
 ```bash
 py app.py
 ```
+## after running the project
 
+use the flask to check functionality
 
 ## functions
 Addition Function:
