@@ -7,7 +7,7 @@ This is a simple Python Flask project named "test" with five functions. Follow t
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/your-username/test.git
+    git clone https://github.com/shalevhagshur/Test.git
     ```
 
 2. Change into the project directory:
